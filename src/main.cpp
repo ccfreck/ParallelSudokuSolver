@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <thread>
 using namespace std;
 
 const int SIZE = 9;
@@ -136,6 +137,29 @@ bool solveSudokuSequentialBackTracking(vector<vector<int>> &matrix, int row, int
 
     // (Optional) Undo State Change
     // If you return from a recursive call, you need to undo the state change you did in step (b) above before you can go on to the next iteration of this move-generating loop. (We saw this is optional in some cases, as with n-queens, where we didn't need to worry about setting whereThemQueensAt[column] to a dummy value because we were about to overwrite it in the next iteration of our for-loop anyway.)
+}
+
+void parallelBackTrackGateway(vector<vector<<int>> matrix)
+{
+    int numThreads = SIZE;
+    vector<thread> threads;
+    for (int i = 0; i < SIZE; i++)
+    {
+        threads.emplace_back(parallelBackTrackingSudoku, matrix, row, col, i);
+    }
+
+    for (auto &t: threads)
+    {
+        t.join();
+    }
+}
+
+void parallelBackTrackingSudoku(vector<vector<<int>> matrix, int row, int col, int num)
+{
+    // Split the work – Instead of one person (or one computer thread) trying every possibility, we divide the job. 
+    // Each person (or thread) starts with a different number in the first empty spot and explores from there.
+    // Shared solution variable – Once someone finds the correct solution, we don’t want others to keep working for no reason! 
+    // We use a shared solution variable that tells everyone to stop once the puzzle is solved.
 }
 
 void solveSudoku(vector<vector<int>> &matrix) 
