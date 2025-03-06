@@ -1,11 +1,23 @@
 # ParallelSudokuSolver
 6th March 2025
 
+Compile Instructions:
+
+In the terminal of your choice, after the code repo has been cloned, in the src file please run:
+	
+	g++ -std=c++11 main.cpp sudoku_solver.cpp
+ Then run:
+ 
+ 	./a.out
+
+
+
+Research Paper Draft (Unfinished)
 **ABSTRACT**
 
 Sudoku is a popular number-puzzle game that is often enjoyed in newspapers or mobile apps. The goal of this project aims to parallelize the sequential solutions that solve these Sudoku puzzles. Familiar topics such as multi-threading, conditional variables, and mutexes will be used to solve this problem.
 
-**GOALS**
+**I. GOALS**
 1. Parallelize the sequential backtracking solution
 2. Capture the time and percentage that the algorithm surpasses the sequential algorithm in speed
 3. Four threads working on copies of the same board to see which start position will find the solution the fastest
@@ -36,3 +48,20 @@ Base Cases:
 	
 	return false
   
+
+**II. Possible Algorithms to use for this project.**
+
+- Dancing Links
+- Parallelized Backtracking
+- etc... 
+
+**III. Activity Diagram**
+
+- paste picture here
+
+
+**IV. Time Diagrams of Speedup**
+
+- Ideally a line graph
+
+
