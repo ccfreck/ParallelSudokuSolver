@@ -17,20 +17,22 @@ Sudoku is a popular number-puzzle game that is often enjoyed in newspapers or mo
 **Pseudocode for Sequential Backtracking Soln:**
 
 Base Cases:
-if (in final cell of board)
-    return true
-if (in last column)
-    go to next row, col = 0
-if (board[row][col] != 0)
-    return solveSudokuSequentialBacktracking(board, row, column)
 
-make state change:
-for (i in 1 - 9 possible numbers)
-    if (isSafeMove)
-      board[row][column] = i;
-      if (solveSequentialBacktracking)
-          return true;
-      undo state change: board[row][column] = 0
+	if (in final cell of board)
 
-return false
+    	return true
+	if (in last column)
+	    go to next row, col = 0
+	if (board[row][col] != 0)
+	    return solveSudokuSequentialBacktracking(board, row, column)
+	
+	make state change:
+	for (i in 1 - 9 possible numbers)
+	    if (isSafeMove)
+	      board[row][column] = i;
+	      if (solveSequentialBacktracking)
+	          return true;
+	      undo state change: board[row][column] = 0
+	
+	return false
   
