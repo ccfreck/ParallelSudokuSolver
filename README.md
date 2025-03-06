@@ -2,6 +2,7 @@
 6th March 2025
 
 **ABSTRACT**
+
 Sudoku is a popular number-puzzle game that is often enjoyed in newspapers or mobile apps. The goal of this project aims to parallelize the sequential solutions that solve these Sudoku puzzles. Familiar topics such as multi-threading, conditional variables, and mutexes will be used to solve this problem.
 
 **GOALS**
