@@ -12,8 +12,8 @@ int main()
     cout << "SOLVING MATRIX USING BACKTRACKING\n";
     
     // Call either the sequential or parallel solver
-    solveSudoku(matrix);
-    // parallelBackTrackGateway(matrix);
+    // solveSudoku(matrix);
+    parallelBackTrackGateway(matrix);
 
     printSudoku(matrix);
     return 0;

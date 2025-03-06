@@ -1,4 +1,7 @@
 #include "sudoku_solver.h"
+#include <atomic> // For atomic flag
+
+std::mutex mtxBoardCopies;
 
 void readSudokuFromFile(vector<vector<int>> &matrix, const string& filename) 
 {
@@ -19,20 +22,20 @@ void readSudokuFromFile(vector<vector<int>> &matrix, const string& filename)
     file.close();
 }
 
-void printSudoku(vector<vector<int>> &matrix) 
+void printSudoku(const vector<vector<int>> &matrix) 
 {
     cout << "Sudoku Board:\n";
-    for (int i = 0; i < SIZE; i++) 
+    for (const auto& row : matrix) 
     {
-        for (int j = 0; j < SIZE; j++) 
+        for (int num : row) 
         {
-            cout << matrix[i][j] << " ";
+            cout << num << " ";
         }
         cout << endl;
     }
 }
 
-bool isSafeMove(vector<vector<int>> &matrix, int row, int col, int currNum)
+bool isSafeMove(const vector<vector<int>> &matrix, int row, int col, int currNum)
 {
     for (int i = 0; i < SIZE; i++)
     {
@@ -85,30 +88,52 @@ bool solveSudokuSequentialBackTracking(vector<vector<int>> &matrix, int row, int
     return false;
 }
 
-void parallelBackTrackingSudoku(vector<vector<int>> &matrix, int startNum)
+void parallelBackTrackingSudoku(vector<vector<int>> &board, int startNum, vector<vector<int>> &solvedBoard, std::atomic<bool> &solvedFlag)
 {
-    if (isSafeMove(matrix, 0, 0, startNum))
+    if (isSafeMove(board, 0, 0, startNum))
     {
-        matrix[0][0] = startNum;
-        solveSudokuSequentialBackTracking(matrix, 0, 1);
+        board[0][0] = startNum;
+        if (solveSudokuSequentialBackTracking(board, 0, 1))
+        {
+            lock_guard<mutex> lock(mtxBoardCopies);
+            if (!solvedFlag)
+            {
+                solvedBoard = board;
+                solvedFlag = true;
+            }
+        }
     }
 }
+
+
 
 void parallelBackTrackGateway(vector<vector<int>> &matrix)
 {
     vector<thread> threads;
-    vector<vector<vector<int>>> boards (9, matrix);
+    vector<vector<int>> solvedBoard(SIZE, vector<int>(SIZE, 0));
+    std::atomic<bool> solvedFlag(false);
 
-    for (int i = 0; i < SIZE; i++)
+    for (int i = 1; i <= SIZE; i++)
     {
-        threads.emplace_back(parallelBackTrackingSudoku, ref(boards[i]), i);
+        threads.emplace_back([&, i]() {
+            vector<vector<int>> boardCopy = matrix;
+            parallelBackTrackingSudoku(boardCopy, i, solvedBoard, solvedFlag);
+        });
     }
 
-    for (auto &t: threads)
+    for (auto &t : threads)
     {
         t.join();
     }
+
+    if (solvedFlag.load())
+    {
+        matrix = solvedBoard; // Update the original matrix with the solved board
+    } else {
+        cout << "No solution found.\n";
+    }
 }
+
 
 void solveSudoku(vector<vector<int>> &matrix) 
 {
