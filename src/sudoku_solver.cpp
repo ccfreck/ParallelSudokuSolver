@@ -92,14 +92,17 @@ void parallelBackTrackingSudoku(vector<vector<int>> &board, int startNum, vector
 {
     if (isSafeMove(board, 0, 0, startNum))
     {
-        board[0][0] = startNum;
-        if (solveSudokuSequentialBackTracking(board, 0, 1))
+        cout << "Start Number: " << startNum << endl;
+        // board[0][2] = startNum;
+        cout << "printing the current copy of board" << endl;
+        printSudoku(board);
+        if (solveSudokuSequentialBackTracking(ref(board), 0, 0))
         {
             lock_guard<mutex> lock(mtxBoardCopies);
             if (!solvedFlag)
             {
                 solvedBoard = board;
-                solvedFlag = true;
+                solvedFlag.store(true);
             }
         }
     }
@@ -113,11 +116,32 @@ void parallelBackTrackGateway(vector<vector<int>> &matrix)
     vector<vector<int>> solvedBoard(SIZE, vector<int>(SIZE, 0));
     std::atomic<bool> solvedFlag(false);
 
-    for (int i = 1; i <= SIZE; i++)
+    vector<vector<int>> boardCopy1 = matrix;
+    vector<vector<int>> boardCopy2 = matrix;
+    vector<vector<int>> boardCopy3 = matrix;
+    vector<vector<int>> boardCopy4 = matrix;
+    vector<vector<int>> boardCopy5 = matrix;
+    vector<vector<int>> boardCopy6 = matrix;
+    vector<vector<int>> boardCopy7 = matrix;
+    vector<vector<int>> boardCopy8 = matrix;
+    vector<vector<int>> boardCopy9 = matrix;
+
+    vector<vector<vector<int>>> boards;
+    boards.push_back(boardCopy1);
+    boards.push_back(boardCopy2);
+    boards.push_back(boardCopy3);
+    boards.push_back(boardCopy4);
+    boards.push_back(boardCopy5);
+    boards.push_back(boardCopy6);
+    boards.push_back(boardCopy7);
+    boards.push_back(boardCopy8);
+    boards.push_back(boardCopy9);
+    
+    for (int i = 0; i < SIZE; i++)
     {
-        threads.emplace_back([&, i]() {
-            vector<vector<int>> boardCopy = matrix;
-            parallelBackTrackingSudoku(boardCopy, i, solvedBoard, solvedFlag);
+        threads.emplace_back([&, i]() 
+        {
+            parallelBackTrackingSudoku(boards[i], i+1, solvedBoard, solvedFlag);
         });
     }
 
@@ -129,7 +153,9 @@ void parallelBackTrackGateway(vector<vector<int>> &matrix)
     if (solvedFlag.load())
     {
         matrix = solvedBoard; // Update the original matrix with the solved board
-    } else {
+    } 
+    else 
+    {
         cout << "No solution found.\n";
     }
 }
