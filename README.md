@@ -31,12 +31,11 @@ Sudoku is a popular number-puzzle game that is often enjoyed in newspapers or mo
 Base Cases:
 
 	if (in final cell of board)
-
-    	return true
+ 		return true
 	if (in last column)
-	    go to next row, col = 0
+		go to next row, col = 0
 	if (board[row][col] != 0)
-	    return solveSudokuSequentialBacktracking(board, row, column)
+		return solveSudokuSequentialBacktracking(board, row, column)
 	
 	make state change:
 	for (i in 1 - 9 possible numbers)
