@@ -17,5 +17,7 @@ bool solveSudokuSequentialBackTracking(vector<vector<int>> &matrix, int row, int
 void parallelBackTrackingSudoku(vector<vector<int>> &matrix, int startNum);
 void parallelBackTrackGateway(vector<vector<int>> &matrix);
 void solveSudoku(vector<vector<int>> &matrix);
+void solveSudokuParallelDFS(vector<vector<int>> &matrix);
+bool parallelDFS(vector<vector<int>> &matrix, int row, int col);
 
 #endif // SUDOKU_SOLVER_H

@@ -1,8 +1,6 @@
 #include "sudoku_solver.h"
 #include "timer.h"
-// compile instructions:
-// g++ -std=c++11 main.cpp sudoku_solver.cpp
-// ./a.out
+
 int main() 
 {
     //timer stuff 
@@ -12,15 +10,14 @@ int main()
     readSudokuFromFile(matrix, "../input_files/input1.txt");
     printSudoku(matrix);
     
-    cout << "SOLVING MATRIX USING BACKTRACKING\n";
+    cout << "SOLVING MATRIX USING PARALLEL DFS\n";
     
     // Call either the sequential or parallel solver
     timer.start();
-    solveSudoku(matrix);
+    solveSudokuParallelDFS(matrix);
     auto tts = timer.getElapsedTime();
 
     std::cout << "execution time for sequential: " << tts << " ms\n" << endl;
-    // parallelBackTrackGateway(matrix);
 
     printSudoku(matrix);
     return 0;
