@@ -7,6 +7,8 @@
 #include <thread>
 #include <set>
 #include <map>
+#include <omp.h>
+#include <atomic>
 
 using namespace std;
 

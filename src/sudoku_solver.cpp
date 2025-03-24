@@ -125,6 +125,53 @@ void initializeCandidates(vector<vector<int>> &matrix, vector<vector<set<int>>> 
     }
 }
 
+void initializeCandidatesParallel(vector<vector<int>> &matrix, vector<vector<set<int>>> &candidates) 
+{
+    candidates.assign(SIZE, vector<set<int>>(SIZE));
+
+    #pragma omp parallel for
+    for (int row = 0; row < SIZE; row++) 
+    {
+        for (int col = 0; col < SIZE; col++) 
+        {
+            if (matrix[row][col] == 0) 
+            {
+                set<int> possibleNumbers;
+                for (int num = 1; num <= SIZE; num++)
+                {
+                    possibleNumbers.insert(num);
+                }
+
+                // Remove numbers from row & column
+                for (int i = 0; i < SIZE; i++)
+                {
+                    possibleNumbers.erase(matrix[row][i]);
+                    possibleNumbers.erase(matrix[i][col]);
+                }
+
+                // Remove numbers from 3x3 box
+                int subRow = row - (row % 3);
+                int subCol = col - (col % 3);
+                for (int i = 0; i < 3; i++)
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        possibleNumbers.erase(matrix[subRow + i][subCol + j]);
+                    }
+                }
+
+                // Critical section needed here to avoid data race on shared matrix
+                candidates[row][col] = possibleNumbers;
+            }
+            else
+            {
+                candidates[row][col].clear(); // Optional: zero out pre-filled
+            }
+        }
+    }
+}
+
+
 bool eliminateSudokuPossibilities(vector<vector<int>> &matrix, vector<vector<set<int>>> &candidates) 
 {
     bool changed = false;
@@ -160,6 +207,45 @@ bool eliminateSudokuPossibilities(vector<vector<int>> &matrix, vector<vector<set
             }
         }
     }
+    return changed;
+}
+
+#include <atomic>
+
+bool eliminateSudokuPossibilitiesParallel(vector<vector<int>> &matrix, vector<vector<set<int>>> &candidates) 
+{
+    atomic<bool> changed(false);
+
+    #pragma omp parallel for collapse(2)
+    for (int row = 0; row < SIZE; row++) {
+        for (int col = 0; col < SIZE; col++) {
+            if (matrix[row][col] == 0 && candidates[row][col].size() == 1) {
+                int num = *candidates[row][col].begin();
+                matrix[row][col] = num;
+                candidates[row][col].clear();
+                changed = true;
+
+                // Update candidates for related cells
+                for (int i = 0; i < SIZE; i++) {
+                    #pragma omp critical
+                    {
+                        candidates[row][i].erase(num);
+                        candidates[i][col].erase(num);
+                    }
+                }
+
+                int subRow = row - (row % 3);
+                int subCol = col - (col % 3);
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        #pragma omp critical
+                        candidates[subRow + i][subCol + j].erase(num);
+                    }
+                }
+            }
+        }
+    }
+
     return changed;
 }
 

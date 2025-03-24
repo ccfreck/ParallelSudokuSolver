@@ -1,7 +1,7 @@
 #include "sudoku_solver.h"
 
 // compile instructions:
-// g++ -std=c++11 main.cpp sudoku_solver.cpp
+// g++ -std=c++11 -fopenmp main.cpp sudoku_solver.cpp
 // ./a.out
 int main() 
 {
@@ -19,29 +19,33 @@ int main()
     {
         changed = false;
 
-        cout << "Applying Elimination Strategy...\n";
+        auto start = chrono::high_resolution_clock::now();
         if (eliminateSudokuPossibilities(matrix, candidates)) {
+            cout << "Applying Elimination Strategy...\n";
+            auto end = chrono::high_resolution_clock::now();
+            chrono::duration<double, milli> duration = end - start;
+            cout << "Done. Time taken: " << duration.count() << " ms\n";
             changed = true;
             printSudoku(matrix);
             continue;
         }
 
-        cout << "Applying Lone Ranger Strategy...\n";
         if (applyLoneRangerStrategy(matrix, candidates)) {
+            cout << "Applying Lone Ranger Strategy...\n";
             changed = true;
             printSudoku(matrix);
             continue;
         }
 
-        cout << "Applying Twins Strategy...\n";
         if (applyTwinsStrategy(matrix, candidates)) {
+            cout << "Applying Twins Strategy...\n";
             changed = true;
             printSudoku(matrix);
             continue;
         }
 
-        cout << "Applying Triplets Strategy...\n";
         if (applyTripletStrategy(matrix, candidates)) {
+            cout << "Applying Triplets Strategy...\n";
             changed = true;
             printSudoku(matrix);
             continue;
