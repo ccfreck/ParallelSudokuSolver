@@ -114,3 +114,4 @@ void solveSudoku(vector<vector<int>> &matrix)
 {
     solveSudokuSequentialBackTracking(matrix, 0, 0);
 }
+
