@@ -21,7 +21,9 @@ bool solveSudokuSequentialBackTracking(vector<vector<int>> &matrix, int row, int
 void parallelBackTrackingSudoku(vector<vector<int>> &matrix, int startNum);
 void parallelBackTrackGateway(vector<vector<int>> &matrix);
 void initializeCandidates(vector<vector<int>> &matrix, vector<vector<set<int>>> &candidates);
+void initializeCandidatesParallel(vector<vector<int>> &matrix, vector<vector<set<int>>> &candidates);
 bool eliminateSudokuPossibilities(vector<vector<int>> &matrix, vector<vector<set<int>>> &candidates);
+bool eliminateSudokuPossibilitiesParallel(vector<vector<int>> &matrix, vector<vector<set<int>>> &candidates);
 bool applyLoneRangerStrategy(vector<vector<int>> &matrix, vector<vector<set<int>>> &candidates);
 bool applyTwinsStrategy(vector<vector<int>> &matrix, vector<vector<set<int>>> &candidates);
 bool applyTripletStrategy(vector<vector<int>> &matrix, vector<vector<set<int>>> &candidates);
