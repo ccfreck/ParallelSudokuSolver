@@ -1,5 +1,7 @@
 #include "sudoku_solver.h"
 
+double start;
+
 void readSudokuFromFile(vector<vector<int>> &matrix, const string& filename) 
 {
     ifstream file(filename);
@@ -85,33 +87,55 @@ bool solveSudokuSequentialBackTracking(vector<vector<int>> &matrix, int row, int
     return false;
 }
 
-void parallelBackTrackingSudoku(vector<vector<int>> &matrix, int startNum)
-{
-    if (isSafeMove(matrix, 0, 0, startNum))
-    {
-        matrix[0][0] = startNum;
-        solveSudokuSequentialBackTracking(matrix, 0, 1);
-    }
-}
-
-void parallelBackTrackGateway(vector<vector<int>> &matrix)
-{
-    vector<thread> threads;
-    vector<vector<vector<int>>> boards (9, matrix);
-
-    for (int i = 0; i < SIZE; i++)
-    {
-        threads.emplace_back(parallelBackTrackingSudoku, ref(boards[i]), i);
-    }
-
-    for (auto &t: threads)
-    {
-        t.join();
-    }
-}
-
 void solveSudoku(vector<vector<int>> &matrix) 
 {
     solveSudokuSequentialBackTracking(matrix, 0, 0);
+}
+
+
+bool findZero(const SudokuGrid &grid, int &row, int &col)
+{
+    for (row = 0; row < SIZE; row++)
+        for (col = 0; col < SIZE; col++)
+            if (grid[row][col] == 0)
+                return true;
+    return false;
+}
+
+
+bool solve(SudokuGrid grid, int level) 
+{
+    int row, col;
+    if (!findZero(grid, row, col)) 
+        return true;
+
+    for (int num = 1; num <= SIZE; num++) {
+        if (isSafeMove(grid, row, col, num)) 
+        {
+            #pragma omp task default(none) firstprivate(grid, row, col, num, level) shared(start, std::cout) final(level > 1)
+            {
+                SudokuGrid copyGrid = grid;
+                copyGrid[row][col] = num;
+                if (solve(copyGrid, level + 1)) 
+                {
+                    printSudoku(copyGrid);
+                    double end = omp_get_wtime();
+                    std::cout << "\nSolved in " << (end - start) << " s\n" << std::endl;
+                    exit(0);
+                }
+            }
+        }
+    }
+    #pragma omp taskwait
+    return false;
+}
+
+void parallelDFSGateway(SudokuGrid sudoku)
+{
+    #pragma omp parallel default(none) shared(sudoku) num_threads(4)
+    #pragma omp single nowait
+    {
+        solve(sudoku, 1);
+    }
 }
 
