@@ -45,10 +45,27 @@ bool is_exist_box(const SudokuGrid &grid, int startRow, int startCol, int num) {
     return false;
 }
 
-bool is_safe_num(const SudokuGrid &grid, int row, int col, int num) {
-    return !is_exist_row(grid, row, num) &&
-           !is_exist_col(grid, col, num) &&
-           !is_exist_box(grid, row - (row % 3), col - (col % 3), num);
+bool isSafeMove(vector<vector<int>> &matrix, int row, int col, int currNum)
+{
+    for (int i = 0; i < SIZE; i++)
+    {
+        if (matrix[row][i] == currNum || matrix[i][col] == currNum)
+            return false;
+    }
+
+    int subRow = row - (row % 3);
+    int subCol = col - (col % 3);
+
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            if (matrix[subRow + i][subCol + j] == currNum)
+                return false;
+        }
+    }
+
+    return true;
 }
 
 bool find_unassigned(const SudokuGrid &grid, int &row, int &col) {
@@ -67,7 +84,7 @@ bool solve(SudokuGrid grid, int level) {
     if (!find_unassigned(grid, row, col)) return true;
 
     for (int num = 1; num <= SIZE; num++) {
-        if (is_safe_num(grid, row, col, num)) {
+        if (isSafeMove(grid, row, col, num)) {
             #pragma omp task default(none) firstprivate(grid, row, col, num, level) shared(start, std::cout) final(level > 1)
             {
                 SudokuGrid copy_grid = grid;
