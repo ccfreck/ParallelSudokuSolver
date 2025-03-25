@@ -4,7 +4,7 @@
 Compile Instructions:
 
 In the terminal of your choice, after the code repo has been cloned, in the src file please run:
-	
+	cd src
 	g++ -std=c++11 main.cpp sudoku_solver.cpp dancing_links.cpp multiple_puzzles.cpp bruteforce.cpp parallelbf.cpp -pthread -fopenmp -o sudoku_solver
  Then run:
  
