@@ -43,9 +43,7 @@ void solveMultiplePuzzlesParallel(int userChoice, const string& filePath) {
                     globalFinalSolution = SudokuGrid(SIZE, vector<int>(SIZE, 0));
                     parallelDFSGateway(board);
                 }
-                else if (userChoice == 3) solveBruteForce(board);
-                else if (userChoice == 4) solveParallelBruteForce(board);
-                else if (userChoice == 5) {
+                else if (userChoice == 3) {
                     DLX dlx(NUM_COLS);
                     dlx.buildFromSudoku(board);
                     dlx.search(0);

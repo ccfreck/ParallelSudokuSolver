@@ -201,15 +201,13 @@ int main() {
             cout << "Select your algorithm:\n";
             cout << "1 -> Sequential DFS\n";
             cout << "2 -> Parallel DFS\n";
-            cout << "3 -> Brute Force\n";
-            cout << "4 -> Parallel Brute Force\n";
-            cout << "5 -> Dancing Links\n";
+            cout << "3 -> Dancing Links\n";
 
             int userChoice = 0;
             cin >> userChoice;
 
-            if (userChoice < 1 || userChoice > 5) {
-                cout << "Invalid choice. Please enter 1, 2, 3, 4, or 5.\n\n";
+            if (userChoice < 1 || userChoice > 3) {
+                cout << "Invalid choice. Please enter 1, 2, or 3.\n\n";
                 continue;
             }
 

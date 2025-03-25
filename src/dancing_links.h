@@ -198,16 +198,21 @@ struct DLX
             int n = rowID % SUDOKU_SIZE + 1;
             solved[r][c] = n;
         }
-        cout << "Solved Sudoku:\n";
+
         for (int i = 0; i < SUDOKU_SIZE; i++)
         {
             for (int j = 0; j < SUDOKU_SIZE; j++)
             {
                 cout << solved[i][j] << " ";
+                if ((j + 1) % 3 == 0 && j != SUDOKU_SIZE - 1)
+                    cout << "| ";
             }
-            cout << endl;
+            cout << "\n";
+            if ((i + 1) % 3 == 0 && i != SUDOKU_SIZE - 1)
+                cout << "------+-------+------\n";
         }
     }
+
 };
 
 struct DLXMPI
