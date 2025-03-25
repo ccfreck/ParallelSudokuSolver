@@ -12,35 +12,18 @@ int main()
     cout << "Original Sudoku Board:\n";
     printSudoku(matrix);
     
-    // Prepare matrices for all trials to avoid allocation overhead
-    vector<vector<vector<int>>> seqMatrices(NUM_TRIALS, matrix);
-    vector<vector<vector<int>>> parMatrices(NUM_TRIALS, matrix);
+    
     
     // Test sequential solver
-    cout << "\nRunning " << NUM_TRIALS << " trials with sequential isSafeMove...\n";
-    useParallelSolver = false;
-    
-    timer.start();
-    for(int i = 0; i < NUM_TRIALS; i++) {
-        solveSudoku(seqMatrices[i]);
-    }
-    double totalSeqTime = timer.getElapsedTime();
-    double avgSeqTime = totalSeqTime / NUM_TRIALS;
-    cout << "Average sequential solution time: " << avgSeqTime << " ms\n";
-    
-    // Test parallel solver
-    cout << "\nRunning " << NUM_TRIALS << " trials with parallel isSafeMove...\n";
+    cout << "<<<<  Using Parallel Collision Detection >>>>\n";
     useParallelSolver = true;
     
     timer.start();
-    for(int i = 0; i < NUM_TRIALS; i++) {
-        solveSudoku(parMatrices[i]);
-    }
-    double totalParTime = timer.getElapsedTime();
-    double avgParTime = totalParTime / NUM_TRIALS;
-    cout << "Average parallel solution time: " << avgParTime << " ms\n";
+    solveSudoku(matrix);
+    double elapsedParTime = timer.getElapsedTime();
     
-    cout << "\nAverage speedup: " << avgSeqTime/avgParTime << "x\n";
+    
+    cout << "Parallel solution time: " << elapsedParTime << " ms\n";
     
     return 0;
 }
