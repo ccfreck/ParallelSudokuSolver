@@ -117,13 +117,13 @@ bool solve(SudokuGrid grid, int level)
             {
                 SudokuGrid copyGrid = grid;
                 copyGrid[row][col] = num;
-                if (solve(copyGrid, level + 1)) 
-                {
-                    printSudoku(copyGrid);
-                    //double end = omp_get_wtime();
-                    //std::cout << "\nSolved in " << (end - start) << " s\n" << std::endl;
-                    //exit(0);
-                }
+                // if (solve(copyGrid, level + 1)) 
+                // {
+                //     printSudoku(copyGrid);
+                //     //double end = omp_get_wtime();
+                //     //std::cout << "\nSolved in " << (end - start) << " s\n" << std::endl;
+                //     return true;
+                // }
             }
         }
     }
