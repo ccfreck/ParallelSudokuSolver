@@ -1,10 +1,29 @@
-#include "parallelbf.h"
+#include <iostream>
+#include <vector>
+#include <utility>
+#include <omp.h>
+#include <cmath>  // Added for pow()
+#include <algorithm>  // For min()
 
+using namespace std;
+
+const int SIZE = 9;
 bool solution_found = false;
 vector<vector<int>> solution(SIZE, vector<int>(SIZE));
 
+void printSudoku(const vector<vector<int>>& board) {
+    for (int i = 0; i < SIZE; i++) {
+        if (i % 3 == 0 && i != 0) cout << "------+-------+------\n";
+        for (int j = 0; j < SIZE; j++) {
+            if (j % 3 == 0 && j != 0) cout << "| ";
+            cout << (board[i][j] == 0 ? "." : to_string(board[i][j])) << " ";
+        }
+        cout << endl;
+    }
+}
+
 // Function will check
-bool isABoardValid(const vector<vector<int>>& board) 
+bool isBoardValid(const vector<vector<int>>& board) 
 {
     // Check rows, columns, and boxes
     for (int i = 0; i < SIZE; i++) {
@@ -54,7 +73,7 @@ void solveChunk(vector<vector<int>> board, const vector<pair<int, int>>& emptyCe
     // Check combinations in this chunk
     for (unsigned long long count = 0; count < end - start && !solution_found; count++) 
     {
-        if (isABoardValid(board)) {
+        if (isBoardValid(board)) {
             #pragma omp critical
             {
                 if (!solution_found) 
@@ -102,7 +121,7 @@ bool solveParallelBruteForce(vector<vector<int>>& board)
 
     if (emptyCells.empty()) 
     {
-        return isABoardValid(board);
+        return isBoardValid(board);
     }
 
     const unsigned long long total_combinations = static_cast<unsigned long long>(pow(SIZE, emptyCells.size()));
@@ -124,4 +143,42 @@ bool solveParallelBruteForce(vector<vector<int>>& board)
         return true;
     }
     return false;
+}
+
+int main() 
+{
+    // Easier puzzle (12 empty cells)
+    vector<vector<int>> board = {
+        {5, 3, 4, 6, 7, 8, 9, 1, 2},
+        {6, 7, 2, 1, 9, 5, 3, 0, 8},
+        {1, 9, 8, 3, 4, 2, 0, 6, 7},
+        {8, 5, 9, 7, 6, 0, 4, 2, 3},
+        {4, 2, 6, 8, 0, 3, 7, 9, 1},
+        {7, 1, 3, 9, 2, 0, 8, 5, 6},
+        {9, 6, 1, 5, 3, 7, 0, 8, 4},
+        {2, 8, 7, 4, 1, 9, 6, 0, 5},
+        {3, 4, 5, 2, 8, 6, 1, 7, 9}
+    };
+
+    cout << "Initial board:" << endl;
+    printSudoku(board);
+    cout << "\n" << endl;
+
+    double timeAnswer;
+    double start = omp_get_wtime();
+    if (solveParallelBruteForce(board)) 
+    {
+        double end = omp_get_wtime();
+        timeAnswer = end - start;
+        cout << "Solved Board:" << endl;
+        printSudoku(board);
+    } 
+    else 
+    {
+        cout << "\nNo solution exists" << endl;
+    }
+
+    cout << "\nSolution found in " << timeAnswer << " seconds:" << endl;
+
+    return 0;
 }

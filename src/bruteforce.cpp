@@ -38,38 +38,38 @@ bool isBoardValid(const vector<vector<int>>& board) {
 }
 
 bool solveBruteForce(vector<vector<int>>& board) {
-    vector<vector<set<int>>> candidates;
-    initializeCandidates(board, candidates);
-    bool changed;
-    do
-    {
-        changed = false;
+    // vector<vector<set<int>>> candidates;
+    // initializeCandidates(board, candidates);
+    // bool changed;
+    // do
+    // {
+    //     changed = false;
 
-        if (eliminateSudokuPossibilities(board, candidates)) {
-            // cout << "Applying Elimination Strategy...\n";
-            changed = true;
-            continue;
-        }
+    //     if (eliminateSudokuPossibilities(board, candidates)) {
+    //         // cout << "Applying Elimination Strategy...\n";
+    //         changed = true;
+    //         continue;
+    //     }
 
-        if (applyLoneRangerStrategy(board, candidates)) {
-            // cout << "Applying Lone Ranger Strategy...\n";
-            changed = true;
-            continue;
-        }
+    //     if (applyLoneRangerStrategy(board, candidates)) {
+    //         // cout << "Applying Lone Ranger Strategy...\n";
+    //         changed = true;
+    //         continue;
+    //     }
 
-        if (applyTwinsStrategy(board, candidates)) {
-            // cout << "Applying Twins Strategy...\n";
-            changed = true;
-            continue;
-        }
+    //     if (applyTwinsStrategy(board, candidates)) {
+    //         // cout << "Applying Twins Strategy...\n";
+    //         changed = true;
+    //         continue;
+    //     }
 
-        if (applyTripletStrategy(board, candidates)) {
-            // cout << "Applying Triplets Strategy...\n";
-            changed = true;
-            continue;
-        }
+    //     if (applyTripletStrategy(board, candidates)) {
+    //         // cout << "Applying Triplets Strategy...\n";
+    //         changed = true;
+    //         continue;
+    //     }
 
-    } while (changed);  
+    // } while (changed);  
 
     vector<pair<int, int>> emptyCells;
     for (int i = 0; i < SIZE; i++) {
