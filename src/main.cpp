@@ -1,9 +1,5 @@
 #include "sudoku_solver.h"
 #include "timer.h"
-#include <iostream>
-#include <vector>
-
-using namespace std;
 
 int main() {
     int choice = 1;
@@ -16,7 +12,8 @@ int main() {
         cout << "Select solving method:\n";
         cout << "1 -> Sequential DFS\n";
         cout << "2 -> Parallel DFS\n";
-        cout << "3 -> Performance Comparison (NUM_TRIALS)\n";
+        cout << "3 -> Early Exit Time \"Optimization\"\n";
+        cout << "4 -> Performance Comparison (NUM_TRIALS)\n";
         cout << "9 -> Exit\n";
         cout << "Enter choice: ";
         cin >> choice;
@@ -69,7 +66,30 @@ int main() {
 
             printSudoku(copy);
             cout << "\n\n";
-        } else if (choice == 3) {
+        }else if (choice == 3) {
+            copy = sudoku;
+            Timer timer;
+           
+            readSudokuFromFile(matrix, "../input_files/input1.txt");
+            
+            cout << "Original Sudoku Board:\n";
+            printSudoku(sudoku);
+            
+            
+            
+            // Test sequential solver
+            cout << "<<<<  Using Parallel Collision Detection >>>>\n";
+            useParallelSolver = true;
+            
+            timer.start();
+            solveSudoku(sudoku);
+            auto elapsedTime = timer.getElapsedTime();
+            
+            
+            cout << "Execution time: " << elapsedTime << " ms\n";
+     
+        }
+        else if (choice == 4) {
             Timer timer;
             int numTrials = 0;
             

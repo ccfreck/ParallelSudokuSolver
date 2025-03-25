@@ -1,6 +1,7 @@
 #ifndef SUDOKU_SOLVER_H
 #define SUDOKU_SOLVER_H
 
+#include "thread_pool.h"
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -8,6 +9,12 @@
 #include <omp.h>
 #include <cstring>
 #include <algorithm>
+#include <atomic>
+#include <mutex>
+#include <condition_variable>
+#include <functional>
+#include <queue>
+#include <future> // For std::promise and std::future
 
 using namespace std;
 
@@ -20,6 +27,8 @@ extern double start;
 void readSudokuFromFile(vector<vector<int>> &matrix, const string& filename);
 void printSudoku(vector<vector<int>> &matrix);
 bool isSafeMove(vector<vector<int>> &matrix, int row, int col, int currNum);
+bool isSafeMoveSequential(vector<vector<int>> &matrix, int row, int col, int currNum);
+bool isSafeMoveParallel(vector<vector<int>> &matrix, int row, int col, int currNum);
 bool solveSudokuSequentialBackTracking(vector<vector<int>> &matrix, int row, int col);
 void solveSudoku(vector<vector<int>> &matrix);
 
