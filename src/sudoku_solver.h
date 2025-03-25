@@ -14,7 +14,11 @@
 #include <condition_variable>
 #include <functional>
 #include <queue>
-#include <future> // For std::promise and std::future
+#include <future>
+#include <atomic>
+#include <set>
+#include <chrono>
+#include <map>
 
 using namespace std;
 
@@ -23,6 +27,9 @@ typedef vector<vector<int>> SudokuGrid;
 const int SIZE = 9;
 extern bool useParallelSolver;
 extern double start;
+extern std::atomic<bool> solutionFound;
+extern SudokuGrid finalSolution;
+
 
 void readSudokuFromFile(vector<vector<int>> &matrix, const string& filename);
 void printSudoku(vector<vector<int>> &matrix);
@@ -31,9 +38,14 @@ bool isSafeMoveSequential(vector<vector<int>> &matrix, int row, int col, int cur
 bool isSafeMoveParallel(vector<vector<int>> &matrix, int row, int col, int currNum);
 bool solveSudokuSequentialBackTracking(vector<vector<int>> &matrix, int row, int col);
 void solveSudoku(vector<vector<int>> &matrix);
+bool applyTripletStrategy(vector<vector<int>> &matrix, vector<vector<set<int>>> &candidates);
+bool applyTwinsStrategy(vector<vector<int>> &matrix, vector<vector<set<int>>> &candidates);
+bool applyLoneRangerStrategy(vector<vector<int>> &matrix, vector<vector<set<int>>> &candidates);
+bool eliminateSudokuPossibilities(vector<vector<int>> &matrix, vector<vector<set<int>>> &candidates);
+void initializeCandidates(vector<vector<int>> &matrix, vector<vector<set<int>>> &candidates);
 
 bool findZero(const SudokuGrid &grid, int &row, int &col);
-void parallelDFSGateway(SudokuGrid sudoku);
+void parallelDFSGateway(SudokuGrid& sudoku);
 bool solve(SudokuGrid grid, int level);
 
 #endif // SUDOKU_SOLVER_H

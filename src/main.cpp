@@ -1,4 +1,5 @@
 #include "sudoku_solver.h"
+#include "dancing_links.h"
 #include "timer.h"
 
 int main() {
@@ -14,6 +15,7 @@ int main() {
         cout << "2 -> Parallel DFS\n";
         cout << "3 -> Early Exit Time \"Optimization\"\n";
         cout << "4 -> Performance Comparison \n";
+        cout << "5 -> Dancing Links\n";
         cout << "9 -> Exit\n";
         cout << "Enter choice: ";
         cin >> choice;
@@ -133,6 +135,21 @@ int main() {
 
             // Calculate and display speedup
             cout << "\nAverage speedup: " << avgSeqTime / avgParTime << "x\n\n";
+        } else if (choice == 5) {
+            cout << "Solving Sudoku:\n";
+            printSudoku(sudoku);
+            cout << "---------------------\n";
+
+            DLX dlx(NUM_COLS);
+            dlx.buildFromSudoku(sudoku);
+            cout << "<<<< Solving Sudoku using Dancing Links >>>>\n";
+            auto start = chrono::high_resolution_clock::now();
+            dlx.search(0);
+            auto end = chrono::high_resolution_clock::now();
+            chrono::duration<double, milli> duration = end - start;
+            cout << "Execution Time: " << duration.count() << " ms\n";
+            dlx.printSolution();
+            cout << "\n";
         } else {
             cout << "Invalid choice. Please enter 1, 2, or 3.\n";
             return 1;
