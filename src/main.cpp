@@ -1,4 +1,6 @@
 #include "sudoku_solver.h"
+#include "dancing_links.h"
+#include "dancing_links.cpp"
 
 // compile instructions:
 // g++ -std=c++11 -fopenmp main.cpp sudoku_solver.cpp
@@ -11,43 +13,49 @@ int main()
 
     vector<vector<set<int>>> candidates;
 
+    DLX dlx(NUM_COLS);
+    dlx.buildFromSudoku(matrix);
+    auto start = chrono::high_resolution_clock::now();
+    if (dlx.search(0)) { cout << "it worked" << endl; }
+    auto end = chrono::high_resolution_clock::now();
+    chrono::duration<double, milli> duration = end - start;
+    cout << "Done. Time taken: " << duration.count() << " ms\n";
+    dlx.printSolution();
+
     cout << "Initializing candidates...\n";
     initializeCandidates(matrix, candidates);
 
+    start = chrono::high_resolution_clock::now();
     bool changed;
     do
     {
         changed = false;
 
-        auto start = chrono::high_resolution_clock::now();
         if (eliminateSudokuPossibilities(matrix, candidates)) {
             cout << "Applying Elimination Strategy...\n";
-            auto end = chrono::high_resolution_clock::now();
-            chrono::duration<double, milli> duration = end - start;
-            cout << "Done. Time taken: " << duration.count() << " ms\n";
             changed = true;
-            printSudoku(matrix);
+            // printSudoku(matrix);
             continue;
         }
 
         if (applyLoneRangerStrategy(matrix, candidates)) {
             cout << "Applying Lone Ranger Strategy...\n";
             changed = true;
-            printSudoku(matrix);
+            // printSudoku(matrix);
             continue;
         }
 
         if (applyTwinsStrategy(matrix, candidates)) {
             cout << "Applying Twins Strategy...\n";
             changed = true;
-            printSudoku(matrix);
+            // printSudoku(matrix);
             continue;
         }
 
         if (applyTripletStrategy(matrix, candidates)) {
             cout << "Applying Triplets Strategy...\n";
             changed = true;
-            printSudoku(matrix);
+            // printSudoku(matrix);
             continue;
         }
 
@@ -57,6 +65,9 @@ int main()
     // Call either the sequential or parallel solver
     solveSudoku(matrix);
     // parallelBackTrackGateway(matrix);
+    end = chrono::high_resolution_clock::now();
+    duration = end - start;
+    cout << "Done. Time taken: " << duration.count() << " ms\n";
 
     printSudoku(matrix);
     return 0;

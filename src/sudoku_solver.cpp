@@ -210,8 +210,6 @@ bool eliminateSudokuPossibilities(vector<vector<int>> &matrix, vector<vector<set
     return changed;
 }
 
-#include <atomic>
-
 bool eliminateSudokuPossibilitiesParallel(vector<vector<int>> &matrix, vector<vector<set<int>>> &candidates) 
 {
     atomic<bool> changed(false);
