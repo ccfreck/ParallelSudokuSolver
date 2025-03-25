@@ -91,7 +91,7 @@ int main(int argc, char* argv[]) {
 
     for (int b = 0; b < numBoards; ++b) {
         SudokuGrid board = generateValidBoard();
-        int blanks = rand() % 51 + 20; // Random between 20 and 50
+        int blanks = rand() % 43 + 20; // Random between 20 and 50
         removeCells(board, blanks);
         for (const auto& row : board) {
             for (int i = 0; i < 9; ++i) {

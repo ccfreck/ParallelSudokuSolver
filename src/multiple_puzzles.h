@@ -1,25 +1,21 @@
 #ifndef MULTIPLE_PUZZLES_H
 #define MULTIPLE_PUZZLES_H
 
+#include "multiple_puzzles.h"
 #include "sudoku_solver.h"
+#include "bruteforce.h"
+#include "parallelbf.h"
 #include "dancing_links.h"
+#include "timer.h"
+#include <fstream>
+#include <sstream>
+#include <atomic>
+#include <thread>
 using namespace std;
 
 extern mutex cout_mutex;
 
-class ThreadSafeQueue {
-private:
-    queue<SudokuGrid> q;
-    mutex mtx;
-    condition_variable cv;
+void solveMultiplePuzzlesParallel(int userChoice, const std::string& filePath);
 
-public:
-    void push(const SudokuGrid& grid);
-    SudokuGrid pop();
-    bool empty();
-};
-
-void fillSudokuQueue(ThreadSafeQueue& sudokuQueue, const string& filePath);
-void solveFromQueue(ThreadSafeQueue& queue, int userChoice);
 
 #endif // MULTIPLE_PUZZLES_H

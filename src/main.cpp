@@ -2,6 +2,8 @@
 #include "dancing_links.h"
 #include "timer.h"
 #include "multiple_puzzles.h"
+#include "bruteforce.h"
+#include "parallelbf.h"
 
 mutex cout_mutex;
 
@@ -16,10 +18,12 @@ int main() {
         cout << "Select solving method:\n";
         cout << "1 -> Sequential DFS\n";
         cout << "2 -> Parallel DFS\n";
-        cout << "3 -> Early Exit Time \"Optimization\"\n";
-        cout << "4 -> Performance Comparison \n";
-        cout << "5 -> Dancing Links\n";
-        cout << "6 -> Multiple Puzzles\n";
+        cout << "3 -> Brute Force\n";
+        cout << "4 -> Parallel Brute Force\n";
+        cout << "5 -> Early Exit Time \"Optimization\"\n";
+        cout << "6 -> Performance Comparison \n";
+        cout << "7 -> Dancing Links\n";
+        cout << "8 -> Multiple Puzzles\n";
         cout << "9 -> Exit\n";
         cout << "Enter choice: ";
         cin >> choice;
@@ -34,12 +38,12 @@ int main() {
 
         if (fileChoice < 1 || fileChoice > 10) {
             cout << "Invalid file selection. Please choose between 1 and 10.\n";
-            return 1;
+            continue;
         }
 
         // Construct file path
         string filePath;
-        if (choice == 6)
+        if (choice == 8)
         {
             filePath = "../input_files/inputLong" + to_string(fileChoice) + ".txt";
         }
@@ -80,7 +84,33 @@ int main() {
 
             printSudoku(copy);
             cout << "\n\n";
-        }else if (choice == 3) {
+        } else if (choice == 3) {
+            cout << "<<<< Using Brute Force >>>>\n";
+            copy = sudoku;
+            Timer timer;
+            timer.start();
+            if (solveBruteForce(copy)) {
+                double elapsed = timer.getElapsedTime();
+                cout << "Solution found:\n";
+                printSudoku(copy);
+                cout << "Time taken: " << elapsed << " ms\n\n";
+            } else {
+                cout << "No solution found.\n\n";
+            }
+        } else if (choice == 4) {
+            cout << "<<<< Using Parallel Brute Force >>>>\n";
+            copy = sudoku;
+            Timer timer;
+            timer.start();
+            if (solveParallelBruteForce(copy)) {
+                double elapsed = timer.getElapsedTime();
+                cout << "Solution found:\n";
+                printSudoku(copy);
+                cout << "Time taken: " << elapsed << " ms\n\n";
+            } else {
+                cout << "No solution found.\n\n";
+            }
+        } else if (choice == 5) {
             copy = sudoku;
             Timer timer;
            
@@ -100,10 +130,10 @@ int main() {
             auto elapsedTime = timer.getElapsedTime();
             
             
-            cout << "Execution time: " << elapsedTime << " ms\n";
+            cout << "Execution time: " << elapsedTime << " ms\n\n";
             useParallelSolver = false;
         }
-        else if (choice == 4) {
+        else if (choice == 6) {
             Timer timer;
             int numTrials = 0;
             
@@ -147,7 +177,7 @@ int main() {
 
             // Calculate and display speedup
             cout << "\nAverage speedup: " << avgSeqTime / avgParTime << "x\n\n";
-        } else if (choice == 5) {
+        } else if (choice == 7) {
             cout << "Solving Sudoku:\n";
             printSudoku(sudoku);
             cout << "---------------------\n";
@@ -162,44 +192,26 @@ int main() {
             cout << "Execution Time: " << duration.count() << " ms\n";
             dlx.printSolution();
             cout << "\n";
-        } else if (choice == 6) {
+        } else if (choice == 8) {
             cout << "Now Solving Multiple Puzzles In Parallel:\n";
             cout << "Select your algorithm:\n";
             cout << "1 -> Sequential DFS\n";
             cout << "2 -> Parallel DFS\n";
-            cout << "3 -> Dancing Links\n";
+            cout << "3 -> Brute Force\n";
+            cout << "4 -> Parallel Brute Force\n";
+            cout << "5 -> Dancing Links\n";
 
             int userChoice = 0;
             cin >> userChoice;
 
-            if (userChoice < 1 || userChoice > 3) {
-                cout << "Invalid choice. Please enter 1, 2, or 3.\n";
-                return 1;
+            if (userChoice < 1 || userChoice > 5) {
+                cout << "Invalid choice. Please enter 1, 2, 3, 4, or 5.\n\n";
+                continue;
             }
 
-            ThreadSafeQueue sudokuQueue;
-            fillSudokuQueue(sudokuQueue, filePath);
-            while (!sudokuQueue.empty()) {
-                Timer timer;
-                timer.start();
-
-                vector<thread> threads;
-                int numThreads = thread::hardware_concurrency(); // or a fixed number
-
-                for (int i = 0; i < numThreads; ++i) {
-                    threads.emplace_back(solveFromQueue, ref(sudokuQueue), userChoice);
-                }
-
-                for (auto& t : threads) {
-                    t.join();
-                }
-
-                double elapsedTime = timer.getElapsedTime();
-                cout << "All puzzles solved in " << elapsedTime << " ms.\n";
-
-            }
+            solveMultiplePuzzlesParallel(userChoice, filePath);
         } else {
-            cout << "Invalid choice. Please enter 1, 2, or 3.\n";
+            cout << "Invalid choice. Please enter 1, 2, or 3.\n\n";
             return 1;
         }
     }

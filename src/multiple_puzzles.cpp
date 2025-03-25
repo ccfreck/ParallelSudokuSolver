@@ -1,37 +1,14 @@
 #include "multiple_puzzles.h"
 
-void ThreadSafeQueue::push(const SudokuGrid& grid) {
-    lock_guard<mutex> lock(mtx);
-    q.push(grid);
-    cv.notify_one();
-}
-
-SudokuGrid ThreadSafeQueue::pop() {
-    unique_lock<mutex> lock(mtx);
-    cv.wait(lock, [this]() { return !q.empty(); });
-    SudokuGrid grid = q.front();
-    q.pop();
-    return grid;
-}
-
-bool ThreadSafeQueue::empty() {
-    lock_guard<mutex> lock(mtx);
-    return q.empty();
-}
-
-void fillSudokuQueue(ThreadSafeQueue& sudokuQueue, const string& filePath) {
+void solveMultiplePuzzlesParallel(int userChoice, const string& filePath) {
     ifstream inFile(filePath);
-    if (!inFile) {
-        cerr << "Failed to open file: " << filePath << "\n";
-        return;
-    }
-
     int numBoards;
     inFile >> numBoards;
-    inFile.ignore(); // Skip the newline after the number
+    inFile.ignore();
 
+    vector<SudokuGrid> puzzles;
     for (int b = 0; b < numBoards; ++b) {
-        SudokuGrid board(9, vector<int>(9, 0));
+        SudokuGrid board(9, vector<int>(9));
         for (int i = 0; i < 9; ++i) {
             string line;
             getline(inFile, line);
@@ -40,42 +17,58 @@ void fillSudokuQueue(ThreadSafeQueue& sudokuQueue, const string& filePath) {
                 iss >> board[i][j];
             }
         }
-        sudokuQueue.push(board);
-        string emptyLine;
-        getline(inFile, emptyLine); // Consume empty line
+        puzzles.push_back(board);
+        string blank;
+        getline(inFile, blank);
     }
-}
 
-void solveFromQueue(ThreadSafeQueue& queue, int userChoice) {
-    while (!queue.empty()) {
-        SudokuGrid board = queue.pop();
+    Timer timer;
+    timer.start();
 
-        if (userChoice == 1) {
-            solveSudoku(board);
+    atomic<int> index(0);
+    int numThreads = thread::hardware_concurrency();
+    vector<thread> threads;
 
-            lock_guard<mutex> lock(cout_mutex);
-            // cout << "Sequential DFS Solution:\n";
-            // printSudoku(board);
-            // cout << "---------------------\n";
+    for (int t = 0; t < numThreads; ++t) {
+        threads.emplace_back([&]() {
+            while (true) {
+                int i = index.fetch_add(1);
+                if (i >= puzzles.size()) break;
 
-        } else if (userChoice == 2) {
-            parallelDFSGateway(board);
+                SudokuGrid board = puzzles[i];
+                if (userChoice == 1) solveSudoku(board);
+                else if (userChoice == 2)
+                {
+                    globalSolutionFound = false;
+                    globalFinalSolution = SudokuGrid(SIZE, vector<int>(SIZE, 0));
+                    parallelDFSGateway(board);
+                }
+                else if (userChoice == 3) solveBruteForce(board);
+                else if (userChoice == 4) solveParallelBruteForce(board);
+                else if (userChoice == 5) {
+                    DLX dlx(NUM_COLS);
+                    dlx.buildFromSudoku(board);
+                    dlx.search(0);
+                    lock_guard<mutex> lock(cout_mutex);
+                    cout << "Dancing Links Solution:\n";
+                    dlx.printSolution();
+                    cout << "---------------------\n";
+                    continue;
+                }
 
-            lock_guard<mutex> lock(cout_mutex);
-            // cout << "Parallel DFS Solution:\n";
-            // printSudoku(board);
-            // cout << "---------------------\n";
-
-        } else if (userChoice == 3) {
-            DLX dlx(NUM_COLS);
-            dlx.buildFromSudoku(board);
-            dlx.search(0);
-
-            lock_guard<mutex> lock(cout_mutex);
-            // cout << "Dancing Links Solution:\n";
-            // dlx.printSolution();
-            // cout << "---------------------\n";
-
-        }
+                lock_guard<mutex> lock(cout_mutex);
+                cout << (userChoice == 1 ? "Sequential DFS Solution:\n" :
+                         userChoice == 2 ? "Parallel DFS Solution:\n" :
+                         userChoice == 3 ? "Brute Force Solution:\n" :
+                                           "Parallel Brute Force Solution:\n");
+                printSudoku(board);
+                cout << "---------------------\n";
+            }
+        });
     }
+
+    for (auto& t : threads) t.join();
+
+    double elapsed = timer.getElapsedTime();
+    cout << "All puzzles solved in " << elapsed << " ms.\n\n";
 }

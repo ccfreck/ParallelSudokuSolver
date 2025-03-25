@@ -30,8 +30,8 @@ typedef vector<vector<int>> SudokuGrid;
 const int SIZE = 9;
 extern bool useParallelSolver;
 extern double start;
-extern std::atomic<bool> solutionFound;
-extern SudokuGrid finalSolution;
+extern std::atomic<bool> globalSolutionFound;
+extern SudokuGrid globalFinalSolution;
 
 
 void readSudokuFromFile(vector<vector<int>> &matrix, const string& filename);
