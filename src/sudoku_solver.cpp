@@ -193,7 +193,10 @@ void parallelBackTrackGateway(vector<vector<int>> &matrix)
 void solveSudoku(vector<vector<int>> &matrix) 
 {
     solveSudokuSequentialBackTracking(matrix, 0, 0);
-    cout << "total time in thread acquisition: " << countTime << endl;
-    cout << "toatal time trying number: " << numTries << endl;
+    if(useParallelSolver == true){
+        cout << "total time in thread acquisition: " << countTime << endl;
+        cout << "          total number of checks: " << numTries << endl;
+        cout << "                  avg alloc time: " << countTime/ numTries<< endl;
+    }
 }
 
