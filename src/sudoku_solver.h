@@ -35,7 +35,7 @@ extern SudokuGrid globalFinalSolution;
 
 
 void readSudokuFromFile(vector<vector<int>> &matrix, const string& filename);
-void printSudoku(vector<vector<int>> &matrix);
+void printSudoku(const vector<vector<int>>& board);
 bool isSafeMove(vector<vector<int>> &matrix, int row, int col, int currNum);
 bool isSafeMoveSequential(vector<vector<int>> &matrix, int row, int col, int currNum);
 bool isSafeMoveParallel(vector<vector<int>> &matrix, int row, int col, int currNum);

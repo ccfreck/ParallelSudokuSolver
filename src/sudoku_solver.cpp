@@ -106,11 +106,12 @@ void readSudokuFromFile(vector<vector<int>> &matrix, const string& filename) {
     file.close();
 }
 
-void printSudoku(vector<vector<int>> &matrix) {
-    cout << "Sudoku Board:\n";
+void printSudoku(const vector<vector<int>>& board) {
     for (int i = 0; i < SIZE; i++) {
+        if (i % 3 == 0 && i != 0) cout << "------+-------+------\n";
         for (int j = 0; j < SIZE; j++) {
-            cout << matrix[i][j] << " ";
+            if (j % 3 == 0 && j != 0) cout << "| ";
+            cout << (board[i][j] == 0 ? "." : to_string(board[i][j])) << " ";
         }
         cout << endl;
     }

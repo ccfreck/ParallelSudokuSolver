@@ -85,6 +85,8 @@ int main() {
             printSudoku(copy);
             cout << "\n\n";
         } else if (choice == 3) {
+            cout << "Initial Board:\n";
+            printSudoku(sudoku);
             cout << "<<<< Using Brute Force >>>>\n";
             copy = sudoku;
             Timer timer;
@@ -98,6 +100,8 @@ int main() {
                 cout << "No solution found.\n\n";
             }
         } else if (choice == 4) {
+            cout << "Initial Board:\n";
+            printSudoku(sudoku);
             cout << "<<<< Using Parallel Brute Force >>>>\n";
             copy = sudoku;
             Timer timer;
