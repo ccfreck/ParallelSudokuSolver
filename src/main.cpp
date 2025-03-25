@@ -10,6 +10,7 @@ int main() {
     int choice = 1;
     int fileChoice;
     SudokuGrid sudoku(SIZE, vector<int>(SIZE, 0));
+    SudokuGrid copy = sudoku;
 
     while(1)
     {
@@ -46,22 +47,23 @@ int main() {
 
         if (choice == 1) 
         {
+            copy = sudoku;
             cout << "<<<< Using Sequential DFS >>>>\n";
             timer.start();
-            solveSudoku(sudoku);
+            solveSudoku(copy);
         } 
         else if (choice == 2) 
         {
             cout << "<<<< Using Parallel DFS >>>>\n";
             timer.start();
-            parallelDFSGateway(sudoku);
+            parallelDFSGateway(copy);
         } 
         else 
         {
             cout << "Invalid choice. Please enter 1 or 2.\n";
             return 1;
         }
-         cout << "finsihed" ;
+         cout << "finished" ;
         auto elapsedTime = timer.getElapsedTime();
 
         //for if it's more than 2 seconds
@@ -70,7 +72,7 @@ int main() {
         else
             cout << "Execution time: " << elapsedTime << " ms\n";
 
-        printSudoku(sudoku);
+        printSudoku(copy);
         cout << "\n\n";
     }
     return 0;
