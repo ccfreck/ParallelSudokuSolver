@@ -13,7 +13,7 @@ int main() {
         cout << "1 -> Sequential DFS\n";
         cout << "2 -> Parallel DFS\n";
         cout << "3 -> Early Exit Time \"Optimization\"\n";
-        cout << "4 -> Performance Comparison (NUM_TRIALS)\n";
+        cout << "4 -> Performance Comparison \n";
         cout << "9 -> Exit\n";
         cout << "Enter choice: ";
         cin >> choice;
@@ -62,7 +62,7 @@ int main() {
             if (elapsedTime >= 2000)
                 cout << "Execution time: " << elapsedTime / 1000 << " s\n";
             else
-                cout << "Execution time: " << elapsedTime << " ms\n";
+                cout << "Execution time: " << elapsedTime << " ms\n\n";
 
             printSudoku(copy);
             cout << "\n\n";
@@ -70,7 +70,7 @@ int main() {
             copy = sudoku;
             Timer timer;
            
-            readSudokuFromFile(matrix, "../input_files/input1.txt");
+            readSudokuFromFile(sudoku, "../input_files/input1.txt");
             
             cout << "Original Sudoku Board:\n";
             printSudoku(sudoku);
@@ -87,7 +87,7 @@ int main() {
             
             
             cout << "Execution time: " << elapsedTime << " ms\n";
-     
+            useParallelSolver = false;
         }
         else if (choice == 4) {
             Timer timer;

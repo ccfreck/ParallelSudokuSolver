@@ -174,8 +174,6 @@ void solveSudoku(vector<vector<int>> &matrix)
         cout << "                  avg alloc time: " << countTime/ numTries<< endl;
     }
 }
-
-
 bool findZero(const SudokuGrid &grid, int &row, int &col)
 {
     for (row = 0; row < SIZE; row++)
@@ -199,13 +197,13 @@ bool solve(SudokuGrid grid, int level)
             {
                 SudokuGrid copyGrid = grid;
                 copyGrid[row][col] = num;
-                // if (solve(copyGrid, level + 1)) 
-                // {
-                //     printSudoku(copyGrid);
-                //     //double end = omp_get_wtime();
-                //     //std::cout << "\nSolved in " << (end - start) << " s\n" << std::endl;
-                //     return true;
-                // }
+                if (solve(copyGrid, level + 1)) 
+                {
+                    printSudoku(copyGrid);
+                    //double end = omp_get_wtime();
+                    //std::cout << "\nSolved in " << (end - start) << " s\n" << std::endl;
+                    //exit(0);
+                }
             }
         }
     }
@@ -221,4 +219,3 @@ void parallelDFSGateway(SudokuGrid sudoku)
         solve(sudoku, 1);
     }
 }
-

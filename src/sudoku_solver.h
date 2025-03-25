@@ -21,7 +21,7 @@ using namespace std;
 typedef vector<vector<int>> SudokuGrid;
 
 const int SIZE = 9;
-
+extern bool useParallelSolver;
 extern double start;
 
 void readSudokuFromFile(vector<vector<int>> &matrix, const string& filename);
