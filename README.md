@@ -5,7 +5,7 @@ Compile Instructions:
 
 In the terminal of your choice, after the code repo has been cloned, in the src file please run:
 	
-	g++ -std=c++11 main.cpp sudoku_solver.cpp
+	g++ -std=c++11 main.cpp sudoku_solver.cpp dancing_links.cpp multiple_puzzles.cpp bruteforce.cpp parallelbf.cpp -pthread -fopenmp
  Then run:
  
  	./a.out
@@ -46,20 +46,6 @@ Base Cases:
 	      undo state change: board[row][column] = 0
 	
 	return false
-  
-
-**II. Possible Algorithms to use for this project.**
-
-- Dancing Links
-- Parallelized Backtracking
-- etc... 
-
-**III. Activity Diagram**
-
-- paste picture here
-
-
-**IV. Time Diagrams of Speedup**
 
 - Ideally a line graph
 
