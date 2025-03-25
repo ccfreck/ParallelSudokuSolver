@@ -3,7 +3,9 @@
 #include <iostream>
 
 using namespace std;
-
+// compile instructions:
+// g++ -std=c++11 -pthread main.cpp sudoku_solver.cpp -o sudoku_solver
+// ./sudoku_solver
 int main() {
     int choice;
     int fileChoice;
@@ -36,17 +38,17 @@ int main() {
     cout << "---------------------\n";
 
     Timer timer;
-    timer.start();
 
     if (choice == 1) 
     {
         cout << "<<<< Using Sequential DFS >>>>\n";
+        timer.start();
         solveSudoku(sudoku);
     } 
     else if (choice == 2) 
     {
         cout << "<<<< Using Parallel DFS >>>>\n";
-        start = omp_get_wtime();
+        timer.start();
         parallelDFSGateway(sudoku);
     } 
     else 

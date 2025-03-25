@@ -1,4 +1,5 @@
 #include "sudoku_solver.h"
+#include "timer.h"
 
 double start;
 
@@ -119,8 +120,8 @@ bool solve(SudokuGrid grid, int level)
                 if (solve(copyGrid, level + 1)) 
                 {
                     printSudoku(copyGrid);
-                    double end = omp_get_wtime();
-                    std::cout << "\nSolved in " << (end - start) << " s\n" << std::endl;
+                    //double end = omp_get_wtime();
+                    //std::cout << "\nSolved in " << (end - start) << " s\n" << std::endl;
                     exit(0);
                 }
             }
