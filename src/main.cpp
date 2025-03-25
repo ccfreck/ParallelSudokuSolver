@@ -1,6 +1,9 @@
 #include "sudoku_solver.h"
 #include "dancing_links.h"
 #include "timer.h"
+#include "multiple_puzzles.h"
+
+mutex cout_mutex;
 
 int main() {
     int choice = 1;
@@ -16,6 +19,7 @@ int main() {
         cout << "3 -> Early Exit Time \"Optimization\"\n";
         cout << "4 -> Performance Comparison \n";
         cout << "5 -> Dancing Links\n";
+        cout << "6 -> Multiple Puzzles\n";
         cout << "9 -> Exit\n";
         cout << "Enter choice: ";
         cin >> choice;
@@ -34,10 +38,18 @@ int main() {
         }
 
         // Construct file path
-        string filePath = "../input_files/input" + to_string(fileChoice) + ".txt";
+        string filePath;
+        if (choice == 6)
+        {
+            filePath = "../input_files/inputLong" + to_string(fileChoice) + ".txt";
+        }
+        else
+        {
+            filePath = "../input_files/input" + to_string(fileChoice) + ".txt";            
+            // Read Sudoku puzzle from file
+            readSudokuFromFile(sudoku, filePath);
 
-        // Read Sudoku puzzle from file
-        readSudokuFromFile(sudoku, filePath);
+        }
 
         if (choice == 1 || choice == 2) {
             cout << "Solving Sudoku:\n";
@@ -150,6 +162,42 @@ int main() {
             cout << "Execution Time: " << duration.count() << " ms\n";
             dlx.printSolution();
             cout << "\n";
+        } else if (choice == 6) {
+            cout << "Now Solving Multiple Puzzles In Parallel:\n";
+            cout << "Select your algorithm:\n";
+            cout << "1 -> Sequential DFS\n";
+            cout << "2 -> Parallel DFS\n";
+            cout << "3 -> Dancing Links\n";
+
+            int userChoice = 0;
+            cin >> userChoice;
+
+            if (userChoice < 1 || userChoice > 3) {
+                cout << "Invalid choice. Please enter 1, 2, or 3.\n";
+                return 1;
+            }
+
+            ThreadSafeQueue sudokuQueue;
+            fillSudokuQueue(sudokuQueue, filePath);
+            while (!sudokuQueue.empty()) {
+                Timer timer;
+                timer.start();
+
+                vector<thread> threads;
+                int numThreads = thread::hardware_concurrency(); // or a fixed number
+
+                for (int i = 0; i < numThreads; ++i) {
+                    threads.emplace_back(solveFromQueue, ref(sudokuQueue), userChoice);
+                }
+
+                for (auto& t : threads) {
+                    t.join();
+                }
+
+                double elapsedTime = timer.getElapsedTime();
+                cout << "All puzzles solved in " << elapsedTime << " ms.\n";
+
+            }
         } else {
             cout << "Invalid choice. Please enter 1, 2, or 3.\n";
             return 1;
