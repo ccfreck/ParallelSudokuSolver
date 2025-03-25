@@ -122,7 +122,7 @@ bool solve(SudokuGrid grid, int level)
                     printSudoku(copyGrid);
                     //double end = omp_get_wtime();
                     //std::cout << "\nSolved in " << (end - start) << " s\n" << std::endl;
-                    exit(0);
+                    //exit(0);
                 }
             }
         }
